@@ -1,0 +1,21 @@
+{
+  "name": "umbra-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "UMBRA — Advanced Computational System for Dark Web Analysis & Cyber Threat Intelligence",
+  "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --filter './apps/*' build",
+    "lint": "pnpm --parallel --filter './apps/*' lint",
+    "typecheck": "pnpm --parallel --filter './apps/*' typecheck",
+    "test": "pnpm --parallel --filter './apps/*' test",
+    "db:migrate": "pnpm --filter api exec prisma migrate dev",
+    "db:generate": "pnpm --filter api exec prisma generate",
+    "db:studio": "pnpm --filter api exec prisma studio",
+    "db:seed": "pnpm --filter api exec ts-node prisma/seed.ts"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
