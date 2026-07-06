@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  name             String
+  passwordHash     String
+  emailVerified    Boolean   @default(false)
+  emailVerifyToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  alertThreshold   String    @default("high")
+  unsubscribeToken String    @default(cuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  org           Org?
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Org {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("free")
+  ownerId   String   @unique
+  riskScore Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner          User            @relation(fields: [ownerId], references: [id])
+  watchlistItems WatchlistItem[]
+  findings       Finding[]
+  alerts         Alert[]
+  reports        Report[]
+
+  @@map("orgs")
+}
+
+model WatchlistItem {
+  id            String    @id @default(cuid())
+  orgId         String
+  type          String
+  value         String
+  label         String?
+  status        String    @default("pending_verification")
+  verifiedAt    DateTime?
+  lastScannedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  org      Org       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  findings Finding[]
+
+  @@unique([orgId, type, value])
+  @@map("watchlist_items")
+}
+
+model Finding {
+  id              String    @id @default(cuid())
+  orgId           String
+  watchlistItemId String?
+  breachName      String
+  breachDate      DateTime?
+  domain          String
+  sourceType      String    @default("hibp")
+  severity        String    @default("medium")
+  riskScore       Int       @default(0)
+  recordCount     Int?
+  dataClasses     String[]  @default([])
+  isVerified      Boolean   @default(false)
+  contentHash     String?
+  status          String    @default("new")
+  aiStatus        String    @default("pending")
+  aiSummary       String?
+  aiSeverityReasoning String?
+  aiRemediation   String[]  @default([])
+  aiMitreTechniques String[] @default([])
+  resolvedAt      DateTime?
+  resolvedNote    String?
+  detectedAt      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  org           Org            @relation(fields: [orgId], references: [id])
+  watchlistItem WatchlistItem? @relation(fields: [watchlistItemId], references: [id])
+  alerts        Alert[]
+
+  @@map("findings")
+}
+
+model Alert {
+  id        String    @id @default(cuid())
+  orgId     String
+  findingId String
+  channel   String    @default("email")
+  status    String    @default("pending")
+  sentAt    DateTime?
+  error     String?
+  createdAt DateTime  @default(now())
+
+  org     Org     @relation(fields: [orgId], references: [id])
+  finding Finding @relation(fields: [findingId], references: [id])
+
+  @@map("alerts")
+}
+
+model Report {
+  id          String    @id @default(cuid())
+  orgId       String
+  type        String    @default("threat_summary")
+  format      String    @default("pdf")
+  status      String    @default("generating")
+  fileUrl     String?
+  fileSize    Int?
+  period      String?
+  generatedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  org Org @relation(fields: [orgId], references: [id])
+
+  @@map("reports")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  orgId        String
+  actorId      String?
+  eventType    String
+  resourceType String?
+  resourceId   String?
+  changes      Json?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+
+  @@map("audit_logs")
+}
