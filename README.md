@@ -49,6 +49,14 @@
 
 ---
 
+## Dashboard Preview
+
+![UMBRA Command Center — Platform Overview showing real-time threat telemetry, risk scoring, watchlist, critical findings, AI insights powered by Claude](docs/screenshots/dashboard.png)
+
+> **UMBRA Command Center** — Real-time threat telemetry, AI-powered risk scoring, and live breach activity feed. Organization risk score, active watchlist, critical findings, and Claude-generated AI insights — all in one view.
+
+---
+
 ## Key Features
 
 - 🕵️ **Dark Web Monitoring** — Tor, I2P, Telegram, Discord, paste sites, ransomware leak sites
