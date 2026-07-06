@@ -55,6 +55,9 @@
 
 > **UMBRA Command Center** — Real-time threat telemetry, AI-powered risk scoring, and live breach activity feed. Organization risk score, active watchlist, critical findings, and Claude-generated AI insights — all in one view.
 
+> [!NOTE]
+> All company names, domains, and organizations shown in the screenshot (e.g. "acme.com", "project titan") are **fictional and used for demonstration purposes only**. Any resemblance to real companies is purely coincidental.
+
 ---
 
 ## Key Features
